@@ -2,13 +2,14 @@ const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
+const cors = require('cors')
 
 const userRoutes = require('./routers/userRoutes')
-
 
 const port = 5000
 dotenv.config()
 app.use(express.json())
+app.use(cors())
 
 app.get('/', (req, res) => res.send('Hello World!'))
 
