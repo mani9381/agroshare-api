@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 const {usersModel} = require('../models/users')
 
 async function login(req,res){
@@ -7,7 +8,16 @@ async function login(req,res){
         if(!user){
             return res.status(401).json({auth:false,message:"wrong crendtials"})
         }
-        return res.status(200).json({auth:true,message:"Login successfull"})
+        let payload = {
+            user:{
+                id:user._id,
+                email:user.email
+            }
+        }
+
+        let token = jwt.sign(payload,process.env.JWT_SECRET_KEY,{expiresIn:'10h'})
+
+        return res.status(200).json({auth:true,message:"Login successfull",token})
     }
     catch(err){
         return res.status(500).json({err,message:"Internal server error"})
@@ -33,8 +43,18 @@ async function register(req,res){
     }
 }
 
+async function profile(req,res){
+    try{
+        return res.status(200).json(await usersModel.findOne({email:req.userDetails.email}))
+    }
+    catch(err){
+        return res.status(500).json({err,message:"Internal server error"})
+    }
+}
+
 
 module.exports = {
     login,
-    register
+    register,
+    profile
 }
