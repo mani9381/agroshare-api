@@ -1,12 +1,18 @@
 const jwt = require('jsonwebtoken')
 const {usersModel} = require('../models/users')
+const bcrypt = require('bcrypt')
 
 async function login(req,res){
     try{
         let {email,password} = req.body;
-        let user = await usersModel.findOne({email,password})
+        let user = await usersModel.findOne({email})
         if(!user){
-            return res.status(401).json({auth:false,message:"wrong crendtials"})
+            return res.status(200).json({auth:false,message:"Account not exist with this email address"})
+        }
+        let comapre = await bcrypt.compare(password,user.password)
+        if(!comapre){
+            return res.status(200).json({auth:false,message:"Incorrect Password"})
+
         }
         let payload = {
             user:{
@@ -29,10 +35,11 @@ async function register(req,res){
         let {email,name, password} = req.body
         let user = await usersModel.findOne({email})
         if(user){
-            return res.status().json({message:"User already exists with this email"})
+            return res.status(200).json({message:"User already exists with this email"})
         }
+        let passwordHash =await bcrypt.hash(password,10)
         let doc = new usersModel({
-            email,password,name
+            email,password:passwordHash,name
         })
         await doc.save()
         return res.status(200).json({message:"User registered success"})

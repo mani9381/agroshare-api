@@ -6,7 +6,7 @@ const cors = require('cors')
 
 const userRoutes = require('./routers/userRoutes')
 const productRoute = require('./routers/productRoutes')
-const requestRoutes  = require('./controllers/rentalController')
+const rentalRoutes = require('./routers/rentalRoutes')
 
 const port = 5000
 dotenv.config()
@@ -18,7 +18,7 @@ app.get('/', (req, res) => res.send('Hello World!'))
 
 app.use('/api/v1/users',userRoutes)
 app.use('/api/v1/products',productRoute)
-app.use('/api/v1/requests',requestRoutes)
+app.use('/api/v1/requests',rentalRoutes)
 
 
 
